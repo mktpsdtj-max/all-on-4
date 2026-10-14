@@ -1,31 +1,24 @@
 ---
 // HERO — grid de dos columnas: texto a la izquierda, video a la derecha.
-// Debajo, a todo lo ancho, la jornada del paciente.
-//
-// El argumento de venta del All-on-4 es el tiempo: entras con un
-// problema y sales con dientes el mismo día. Eso deja de ser una
-// frase y pasa a ser la estructura visual del hero.
+// Debajo, a todo lo ancho, la franja de confianza.
 
 import VideoFrame, { type VideoData } from '../VideoFrame.astro';
 import type { Lang } from '../../i18n/ui';
 
-export interface DayStop { time: string; label: string; }
+export interface TrustItem { icon: string; label: string; }
 
 export interface HeroCenteredData {
   variant: 'centered';
-  /** Foto de fondo, muy atenuada: textura, no protagonista. */
   bg: string;
   badge: string;
-  /** Titular en dos actos: la línea corta prepara, la larga remata. */
-  titleLead: string;
-  titleMain: string;
+  titleBefore: string;
+  titleAccent: string;
+  titleAfter?: string;
   subtitle: string;
   primaryCta: string;
   secondaryCta: string;
   video: VideoData;
-  /** La jornada real del paciente. 3 paradas. */
-  day: DayStop[];
-  dayLabel: string;
+  trust: TrustItem[];
 }
 
 interface Props { lang: Lang; data: HeroCenteredData; }
@@ -38,7 +31,6 @@ const { lang, data } = Astro.props;
 
   <div class="container hero__inner">
     <div class="hero__grid">
-      <!-- Columna izquierda: el argumento -->
       <div class="hero__copy">
         <p class="hero__badge">
           <span class="hero__badge-dot psd-pulse-dot"></span>
@@ -46,8 +38,9 @@ const { lang, data } = Astro.props;
         </p>
 
         <h1 class="hero__title display">
-          <span class="hero__title-lead">{data.titleLead}</span>
-          {data.titleMain}
+          {data.titleBefore}{' '}
+          <em class="hero__accent">{data.titleAccent}</em>
+          {data.titleAfter && <>{' '}{data.titleAfter}</>}
         </h1>
 
         <p class="hero__sub">{data.subtitle}</p>
@@ -58,106 +51,79 @@ const { lang, data } = Astro.props;
         </div>
       </div>
 
-      <!-- Columna derecha: el video -->
       <div class="hero__media">
         <VideoFrame lang={lang} video={data.video} ratio="4 / 4.6" />
       </div>
     </div>
 
-    <!-- La jornada: no son "chips de confianza" genéricos, es el
-         horario real de un paciente. Informa y vende al mismo tiempo. -->
-    <div class="day">
-      <p class="day__label">{data.dayLabel}</p>
-      <ol class="day__track">
-        {data.day.map((stop) => (
-          <li class="day__stop">
-            <span class="day__time">{stop.time}</span>
-            <span class="day__text">{stop.label}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <ul class="trust">
+      {data.trust.map((item) => (
+        <li class="trust__item">
+          <span class="trust__icon">
+            <span class="material-symbols-outlined">{item.icon}</span>
+          </span>
+          <span class="trust__label">{item.label}</span>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
 <style>
-  .hero {
-    position: relative;
-    overflow: hidden;
-    background: var(--psd-primary-dark);
-  }
+  .hero { position: relative; overflow: hidden; background: var(--psd-primary-dark); }
 
-  /* La foto queda como textura de fondo, no como protagonista:
-     el video de la derecha es quien manda en este hero. */
   .hero__bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: 70% 30%;
+    position: absolute; inset: 0;
+    background-size: cover; background-position: 70% 30%;
     opacity: .28;
   }
   .hero__scrim {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(105deg, rgba(0,20,42,.96) 0%, rgba(0,20,42,.86) 45%, rgba(0,27,60,.72) 100%);
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,20,42,.96) 0%, rgba(0,20,42,.86) 45%, rgba(0,27,60,.72) 100%);
   }
 
   .hero__inner {
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
     padding-top: clamp(3rem, 7vw, 5.5rem);
-    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
   }
 
-  /* ---------- Grid principal ---------- */
   .hero__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(2.5rem, 5vw, 4rem);
-    align-items: center;
+    display: grid; grid-template-columns: 1fr;
+    gap: clamp(2.5rem, 5vw, 4rem); align-items: center;
   }
   @media (min-width: 1024px) {
     .hero__grid { grid-template-columns: 1.08fr 1fr; gap: 4.5rem; }
   }
-
-  .hero__copy { min-width: 0; }
+  .hero__copy, .hero__media { min-width: 0; }
 
   .hero__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    display: inline-flex; align-items: center; gap: 10px;
     margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
-    font-size: var(--t-small);
-    font-weight: 500;
+    padding: 7px 14px 7px 12px;
+    border-radius: var(--r-chip);
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    font-size: var(--t-small); font-weight: 500;
     color: rgba(255,255,255,.92);
   }
   .hero__badge-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--psd-day);
-    flex-shrink: 0;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--psd-day); flex-shrink: 0;
   }
 
   .hero__title {
     color: #fff;
-    /* Algo más contenido que el display completo: comparte ancho
-       con el video, así que no puede comerse la columna. */
     font-size: clamp(2.25rem, 1.3rem + 3.2vw, 4rem);
     margin: 0 0 clamp(1rem, 2vw, 1.375rem);
-    max-width: 15ch;
+    max-width: 16ch;
     text-wrap: balance;
   }
-  /* El contraste es de peso y escala, no de color sobre una palabra. */
-  .hero__title-lead {
-    display: block;
-    font-size: .46em;
-    font-weight: 400;
-    font-style: italic;
-    letter-spacing: -0.01em;
-    color: rgba(255,255,255,.72);
-    margin-bottom: .35em;
+  /* La promesa en cursiva de la misma serif, azul claro */
+  .hero__accent {
+    font-style: italic; font-weight: 500;
+    color: var(--psd-blue-200);
+    white-space: nowrap;
   }
 
   .hero__sub {
@@ -167,93 +133,39 @@ const { lang, data } = Astro.props;
     margin: 0 0 clamp(1.75rem, 3vw, 2.25rem);
     max-width: 44ch;
   }
-
   .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
-  .hero__media { min-width: 0; }
-
-  /* ---------- La jornada ---------- */
-  .day {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    border-top: 1px solid rgba(255,255,255,.22);
-    padding-top: 22px;
-  }
-  .day__label {
-    margin: 0 0 16px;
-    font-size: var(--t-micro);
-    font-weight: 600;
-    letter-spacing: .04em;
-    color: var(--psd-day);
-  }
-  .day__track {
+  /* Franja de confianza */
+  .trust {
     list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 18px;
+    margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+    padding: 22px 0 0;
+    border-top: 1px solid rgba(255,255,255,.18);
+    display: grid; grid-template-columns: 1fr; gap: 14px;
   }
-  @media (min-width: 720px) {
-    .day__track { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  @media (min-width: 640px) {
+    .trust { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   }
+  .trust__item { display: flex; align-items: center; gap: 12px; }
+  .trust__icon {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+  }
+  .trust__icon :global(.material-symbols-outlined) { font-size: 20px; color: var(--psd-blue-200); }
+  .trust__label { font-size: .9375rem; font-weight: 600; color: #fff; }
 
-  .day__stop {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    position: relative;
-    padding-left: 20px;
-  }
-  /* Marca de hora: punto en móvil, punto sobre la línea en desktop */
-  .day__stop::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: .5em;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--psd-day);
-  }
-  @media (min-width: 720px) {
-    .day__stop { padding-left: 0; padding-top: 24px; }
-    .day__stop::before { top: 0; left: 0; }
-    /* La línea conecta cada parada con la siguiente */
-    .day__stop:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      top: 3.5px;
-      left: 8px;
-      right: 12px;
-      height: 1px;
-      background: rgba(255,255,255,.28);
-    }
-  }
-
-  .day__time {
-    font-family: 'Fraunces', Georgia, serif;
-    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 40;
-    font-size: 1.0625rem;
-    font-weight: 600;
-    color: #fff;
-    letter-spacing: -0.01em;
-  }
-  .day__text {
-    font-size: var(--t-small);
-    color: rgba(255,255,255,.7);
-    max-width: 26ch;
-  }
-
-  /* Entrada orquestada: un solo momento, escalonado, al cargar. */
   @media (prefers-reduced-motion: no-preference) {
-    .hero__badge, .hero__title, .hero__sub, .hero__actions, .hero__media, .day {
+    .hero__badge, .hero__title, .hero__sub, .hero__actions, .hero__media, .trust {
       animation: hero-in .7s cubic-bezier(.2, .7, .3, 1) backwards;
     }
     .hero__badge   { animation-delay: .05s; }
     .hero__title   { animation-delay: .14s; }
+    .hero__media   { animation-delay: .20s; }
     .hero__sub     { animation-delay: .24s; }
     .hero__actions { animation-delay: .32s; }
-    .hero__media   { animation-delay: .20s; }
-    .day           { animation-delay: .42s; }
+    .trust         { animation-delay: .42s; }
   }
   @keyframes hero-in {
     from { opacity: 0; transform: translateY(14px); }

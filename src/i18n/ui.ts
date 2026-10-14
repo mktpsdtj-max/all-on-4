@@ -1,3 +1,8 @@
+// ============================================================
+// Cadenas de interfaz compartidas por toda la landing.
+// El copy de la página vive en src/data/content.ts
+// ============================================================
+
 export const languages = {
   es: 'Español',
   en: 'English',
@@ -5,7 +10,19 @@ export const languages = {
 
 export type Lang = keyof typeof languages;
 
-export const defaultLang: Lang = 'es';
+// El inglés es el idioma principal: vive en la raíz del subdominio.
+// El español queda en /es/.
+export const defaultLang: Lang = 'en';
+
+/** Ruta de la landing en un idioma. El idioma principal no lleva prefijo. */
+export function localizedPath(lang: Lang): string {
+  return lang === defaultLang ? '/' : `/${lang}/`;
+}
+
+/** El otro idioma disponible (para el switch del navbar). */
+export function otherLang(lang: Lang): Lang {
+  return lang === 'en' ? 'es' : 'en';
+}
 
 export const ui = {
   es: {
@@ -43,7 +60,7 @@ export const ui = {
     'video.close': 'Close video',
     'video.empty':
       'Add your video URL to the <code>data-video-src</code> attribute on this component to enable playback.',
-       'ba.before': 'Before',
+    'ba.before': 'Before',
     'ba.after': 'After',
     'ba.slider': 'Before and after comparison',
     'ba.case': 'Case',
@@ -67,6 +84,7 @@ export const contact = {
   tollFree: '+18008889999',
   tollFreeDisplay: '+1 800 888 9999',
   whatsapp: '#',
+  directions: 'https://www.google.com/maps/dir/?api=1&destination=32.5303859,-117.024724',
   mapEmbed:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3363.8412768184426!2d-117.024724!3d32.530385900000006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d94851147c03b7%3A0x2728e028545d0e91!2sPerfect%20Smile%20Dental%20%7C%20Implant%20Center!5e0!3m2!1ses-419!2smx!4v1784660914930!5m2!1ses-419!2smx',
 };

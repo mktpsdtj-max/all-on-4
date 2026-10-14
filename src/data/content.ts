@@ -1,7 +1,3 @@
-// ============================================================
-// TODO EL COPY DE LA LANDING ALL-ON-4, EN LOS 2 IDIOMAS.
-// Para cambiar cualquier texto, edítalo aquí — no en los componentes.
-// ============================================================
 
 import type { Lang } from '../i18n/ui';
 import type { HeroCenteredData } from '../components/heroes/HeroCentered.astro';
@@ -10,6 +6,7 @@ import type { SystemData } from '../components/SystemSection.astro';
 import type { BenefitsData } from '../components/BenefitsGrid.astro';
 import type { ProcessData } from '../components/ProcessSteps.astro';
 import type { StoriesData } from '../components/StoriesGallery.astro';
+import type { LocationData } from '../components/LocationMap.astro';
 import type { CtaData } from '../components/CtaFinal.astro';
 
 export interface NavLink { href: string; label: string; }
@@ -23,6 +20,7 @@ export interface PageContent {
   benefits: BenefitsData;
   process: ProcessData;
   stories: StoriesData;
+  location: LocationData;
   cta: CtaData;
 }
 
@@ -38,8 +36,8 @@ const IMG = {
   // --- Casos antes/después ---
   // Reemplaza cada par por las fotos reales. Mismo encuadre, misma
   // luz y mismo fondo en las dos tomas de cada paciente.
-  ba1Before: '/assets/allon4/allon4-before.jpg',
-  ba1After: '/assets/allon4/allon4-after.jpg',
+  ba1Before: '/casos/caso-1-antes.jpg',
+  ba1After: '/casos/caso-1-despues.jpg',
   ba2Before: '/casos/caso-2-antes.jpg',
   ba2After: '/casos/caso-2-despues.jpg',
   ba3Before: '/casos/caso-3-antes.jpg',
@@ -59,30 +57,31 @@ const es: PageContent = {
     { href: '#beneficios', label: 'Beneficios' },
     { href: '#proceso', label: 'Proceso' },
     { href: '#historias', label: 'Historias' },
+    { href: '#ubicacion', label: 'Ubicación' },
   ],
   hero: {
     variant: 'centered',
     bg: IMG.hero,
-    badge: 'A 5 minutos de la frontera de San Diego',
-    titleLead: 'Cruzas en la mañana.',
-    titleMain: 'Regresas con dientes fijos.',
+    badge: 'A solo 5 minutos de la frontera de San Diego',
+    titleBefore: 'Transforma tu Sonrisa en',
+    titleAccent: 'un Solo Día',
+    titleAfter: 'con All-on-4',
     subtitle:
-      'Implantes de arcada completa en una sola visita. Sin dolor, con sedación guiada, por una fracción de lo que cuestan en Estados Unidos.',
-    primaryCta: 'Agenda tu evaluación gratuita',
-    secondaryCta: 'Ver precios y ahorros',
+      'Implantes de arcada completa, sin dolor, a una fracción del costo de EE. UU. — con especialistas de clase mundial en Tijuana.',
+    primaryCta: 'Agenda tu Evaluación Gratuita Hoy',
+    secondaryCta: 'Ver Opciones de Precios y Ahorros',
     video: {
       src: '',
       type: 'mp4',
       poster: IMG.patient,
       alt: 'Paciente de Perfect Smile Dental contando su experiencia con el All-on-4',
-      eyebrow: 'En 90 segundos',
-      title: 'Cómo es cruzar y salir con dientes el mismo día',
+      eyebrow: 'All-on-4 en Tijuana',
+      title: 'Conoce el tratamiento en menos de 2 minutos',
     },
-    dayLabel: 'Cómo se ve tu día',
-    day: [
-      { time: '8:00 AM', label: 'Cruzas la frontera y llegas a la clínica' },
-      { time: '11:00 AM', label: 'Cirugía con sedación, sin dolor' },
-      { time: '5:00 PM', label: 'Sales con tu nueva sonrisa puesta' },
+    trust: [
+      { icon: 'verified', label: 'Cero Dolor' },
+      { icon: 'savings', label: 'Ahorra hasta 70%' },
+      { icon: 'location_on', label: 'A 5 min de la frontera' },
     ],
   },
   why: {
@@ -94,8 +93,10 @@ const es: PageContent = {
         icon: 'savings',
         tone: 'savings',
         wide: true,
+        figureLead: 'Ahorra hasta',
         figure: '70%',
-        figureNote: 'menos que el precio promedio en EE. UU.',
+        figureNote: 'frente al precio promedio del mismo tratamiento en EE. UU.',
+        compare: { fromLabel: 'Precio promedio en EE. UU.', toLabel: 'Perfect Smile Dental, Tijuana', toPercent: 30 },
         title: 'El mismo titanio, sin el precio de Estados Unidos',
         text: 'Pagas menos por costos de operación, no por materiales más baratos: usamos titanio premium y la misma tecnología médica que encontrarías en San Diego.',
       },
@@ -227,6 +228,18 @@ const es: PageContent = {
       },
     ],
   },
+  location: {
+    id: 'ubicacion',
+    eyebrow: 'Más cerca de lo que crees',
+    heading: 'A 5 Minutos de la Frontera de San Ysidro',
+    text: 'Nuestra clínica está pensada para pacientes que cruzan desde Estados Unidos: llegas caminando desde la garita, sin necesidad de auto ni de recorrer la ciudad.',
+    facts: [
+      { icon: 'directions_walk', label: '5 minutos a pie desde la garita de San Ysidro' },
+      { icon: 'support_agent', label: 'Asistencia concierge desde que cruzas' },
+      { icon: 'event_available', label: 'Regresas a casa el mismo día' },
+    ],
+    directionsCta: 'Cómo llegar',
+  },
   cta: {
     title: '¿Listo para dejar atrás las molestias de los dientes perdidos y ahorrar en tu tratamiento?',
     subtitle:
@@ -249,30 +262,31 @@ const en: PageContent = {
     { href: '#beneficios', label: 'Benefits' },
     { href: '#proceso', label: 'Process' },
     { href: '#historias', label: 'Stories' },
+    { href: '#ubicacion', label: 'Location' },
   ],
   hero: {
     variant: 'centered',
     bg: IMG.hero,
-    badge: '5 minutes from the San Diego border',
-    titleLead: 'Cross in the morning.',
-    titleMain: 'Drive home with fixed teeth.',
+    badge: 'Just 5 minutes from the San Diego border',
+    titleBefore: 'Transform Your Smile in',
+    titleAccent: 'Just One Day',
+    titleAfter: 'with All-on-4',
     subtitle:
-      'Full-arch implants in a single visit. Pain-free, under guided sedation, for a fraction of what they cost in the United States.',
-    primaryCta: 'Book your free evaluation',
-    secondaryCta: 'See pricing and savings',
+      'Full-arch implants, pain-free, at a fraction of the US cost — with world-class specialists in Tijuana.',
+    primaryCta: 'Book Your Free Evaluation Today',
+    secondaryCta: 'View Pricing and Savings Options',
     video: {
       src: '',
       type: 'mp4',
       poster: IMG.patient,
       alt: 'Perfect Smile Dental patient talking about their All-on-4 experience',
-      eyebrow: 'In 90 seconds',
-      title: 'What it is like to cross and leave with teeth the same day',
+      eyebrow: 'All-on-4 in Tijuana',
+      title: 'Get to know the treatment in under 2 minutes',
     },
-    dayLabel: 'What your day looks like',
-    day: [
-      { time: '8:00 AM', label: 'You cross the border and arrive at the clinic' },
-      { time: '11:00 AM', label: 'Surgery under sedation, pain-free' },
-      { time: '5:00 PM', label: 'You leave wearing your new smile' },
+    trust: [
+      { icon: 'verified', label: 'Zero Pain' },
+      { icon: 'savings', label: 'Save up to 70%' },
+      { icon: 'location_on', label: '5 min from the border' },
     ],
   },
   why: {
@@ -284,8 +298,10 @@ const en: PageContent = {
         icon: 'savings',
         tone: 'savings',
         wide: true,
+        figureLead: 'Save up to',
         figure: '70%',
-        figureNote: 'below the average US price',
+        figureNote: 'compared with the average US price for the same treatment',
+        compare: { fromLabel: 'Average US price', toLabel: 'Perfect Smile Dental, Tijuana', toPercent: 30 },
         title: 'The same titanium, without the US price tag',
         text: 'You pay less because of operating costs, not cheaper materials: we use premium titanium and the same medical technology you would find in San Diego.',
       },
@@ -416,6 +432,18 @@ const en: PageContent = {
         note: 'Upper and lower · two visits',
       },
     ],
+  },
+  location: {
+    id: 'ubicacion',
+    eyebrow: 'Closer than you think',
+    heading: '5 Minutes from the San Ysidro Border',
+    text: 'Our clinic is built around patients crossing from the United States: you walk over from the port of entry, no car and no driving across the city.',
+    facts: [
+      { icon: 'directions_walk', label: '5-minute walk from the San Ysidro port of entry' },
+      { icon: 'support_agent', label: 'Concierge assistance from the moment you cross' },
+      { icon: 'event_available', label: 'Back home the same day' },
+    ],
+    directionsCta: 'Get directions',
   },
   cta: {
     title: 'Ready to leave the discomfort of missing teeth behind and save on your treatment?',

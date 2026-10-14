@@ -1,6 +1,8 @@
 ---
 // ============================================================
-// Genera /es/ y /en/ — este subdominio es solo All-on-4.
+// Genera / (inglés, principal) y /es/ (español).
+// El parámetro es opcional: cuando viene undefined, Astro
+// escribe la página en la raíz del subdominio.
 // ============================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HeroCentered from '../../components/heroes/HeroCentered.astro';
@@ -9,13 +11,15 @@ import SystemSection from '../../components/SystemSection.astro';
 import BenefitsGrid from '../../components/BenefitsGrid.astro';
 import ProcessSteps from '../../components/ProcessSteps.astro';
 import StoriesGallery from '../../components/StoriesGallery.astro';
+import LocationMap from '../../components/LocationMap.astro';
 import CtaFinal from '../../components/CtaFinal.astro';
 import content, { type PageContent } from '../../data/content';
-import type { Lang } from '../../i18n/ui';
+import { defaultLang, localizedPath, otherLang, type Lang } from '../../i18n/ui';
 
 export function getStaticPaths() {
   return (Object.keys(content) as Lang[]).map((lang) => ({
-    params: { lang },
+    // El idioma principal no lleva prefijo: params.lang = undefined -> "/"
+    params: { lang: lang === defaultLang ? undefined : lang },
     props: { lang, data: content[lang] },
   }));
 }
@@ -23,21 +27,24 @@ export function getStaticPaths() {
 interface Props { lang: Lang; data: PageContent; }
 const { lang, data } = Astro.props;
 
-const altHref = lang === 'es' ? '/en/' : '/es/';
+const altLang = otherLang(lang);
+const altHref = localizedPath(altLang);
 ---
 
 <BaseLayout
   lang={lang}
+  altLang={altLang}
   title={data.seo.title}
   description={data.seo.description}
   navLinks={data.nav}
   altHref={altHref}
 >
-  <HeroCentered data={data.hero} />
-  <WhyTijuana lang={lang} data={data.why} />
+  <HeroCentered lang={lang} data={data.hero} />
+  <WhyTijuana data={data.why} />
   <SystemSection lang={lang} data={data.system} />
   <BenefitsGrid data={data.benefits} />
   <ProcessSteps data={data.process} />
   <StoriesGallery lang={lang} data={data.stories} />
+  <LocationMap lang={lang} data={data.location} />
   <CtaFinal lang={lang} data={data.cta} />
 </BaseLayout>

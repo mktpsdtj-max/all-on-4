@@ -1,22 +1,23 @@
 ---
-// "¿Por qué Tijuana?" — la sección que derriba la objeción del precio
-// y la del cruce fronterizo.
-//
-// Antes: tres tarjetas iguales. El 70% de ahorro, que es EL argumento,
-// iba en el mismo cuerpo de texto que todo lo demás. Ahora la cifra
-// se lee antes que la frase, y el mapa deja de ser un recuadro al
-// costado para volverse el ancla de la columna derecha.
+// "¿Por qué Tijuana?" — bento: el ahorro ocupa 2×2, las otras dos
+// tarjetas se apilan a la derecha. El mapa vive en LocationMap.astro.
 
-import { useTranslations, contact, type Lang } from '../i18n/ui';
+export interface WhyCompare {
+  fromLabel: string;
+  toLabel: string;
+  /** 30 = la barra de Tijuana mide 30% de la de EE. UU. */
+  toPercent: number;
+}
 
 export interface WhyCard {
   icon: string;
   tone?: 'blue' | 'savings';
   title: string;
   text: string;
-  /** Cifra grande: el dato que carga el argumento (ej. "70%") */
+  figureLead?: string;
   figure?: string;
   figureNote?: string;
+  compare?: WhyCompare;
   wide?: boolean;
 }
 
@@ -27,9 +28,8 @@ export interface WhyData {
   cards: WhyCard[];
 }
 
-interface Props { lang: Lang; data: WhyData; }
-const { lang, data } = Astro.props;
-const t = useTranslations(lang);
+interface Props { data: WhyData; }
+const { data } = Astro.props;
 ---
 
 <section id={data.id} class="section section--white">
@@ -40,145 +40,137 @@ const t = useTranslations(lang);
     </div>
 
     <div class="why">
-      <div class="why__cards">
-        {data.cards.map((card) => (
-          <article
-            class:list={[
-              'card',
-              card.wide && 'card--wide',
-              card.tone === 'savings' && 'card--savings',
-            ]}
-          >
-            {card.figure && (
-              <p class="card__figure">
-                {card.figure}
-                {card.figureNote && <span class="card__figure-note">{card.figureNote}</span>}
-              </p>
+      {data.cards.map((card) =>
+        card.figure ? (
+          <article class:list={['card', 'card--savings', card.wide && 'card--wide']}>
+            <div class="stat">
+              {card.figureLead && <span class="stat__lead">{card.figureLead}</span>}
+              <span class="stat__figure">{card.figure}</span>
+              {card.figureNote && <span class="stat__note">{card.figureNote}</span>}
+            </div>
+
+            {card.compare && (
+              <div class="bars" role="img" aria-label={`${card.compare.fromLabel}: 100%. ${card.compare.toLabel}: ${card.compare.toPercent}%.`}>
+                <div class="bar">
+                  <span class="bar__label">{card.compare.fromLabel}</span>
+                  <span class="bar__track"><span class="bar__fill bar__fill--from" style="--w: 100%"></span></span>
+                </div>
+                <div class="bar">
+                  <span class="bar__label bar__label--to">{card.compare.toLabel}</span>
+                  <span class="bar__track"><span class="bar__fill bar__fill--to" style={`--w: ${card.compare.toPercent}%`}></span></span>
+                </div>
+              </div>
             )}
-            {!card.figure && (
-              <span class:list={['card__icon', `card__icon--${card.tone ?? 'blue'}`]}>
-                <span class="material-symbols-outlined">{card.icon}</span>
-              </span>
-            )}
+
+            <div class="card__body">
+              <h3 class="card__title">{card.title}</h3>
+              <p class="card__text" set:html={card.text} />
+            </div>
+          </article>
+        ) : (
+          <article class="card">
+            <span class:list={['card__icon', `card__icon--${card.tone ?? 'blue'}`]}>
+              <span class="material-symbols-outlined">{card.icon}</span>
+            </span>
             <h3 class="card__title">{card.title}</h3>
             <p class="card__text" set:html={card.text} />
           </article>
-        ))}
-      </div>
-
-      <aside class="why__map">
-        <div class="map-frame">
-          <iframe
-            src={contact.mapEmbed}
-            title={t('map.title')}
-            loading="lazy"
-            allowfullscreen
-            referrerpolicy="strict-origin-when-cross-origin"
-          ></iframe>
-        </div>
-        <p class="map-note">
-          <span class="material-symbols-outlined">directions_walk</span>
-          <span set:html={t('map.note')} />
-        </p>
-      </aside>
+        )
+      )}
     </div>
   </div>
 </section>
 
 <style>
-  .why { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
-  @media (min-width: 1024px) { .why { grid-template-columns: 1.35fr 1fr; gap: 40px; } }
-
-  .why__cards { display: grid; grid-template-columns: 1fr; gap: 16px; }
-  @media (min-width: 640px) { .why__cards { grid-template-columns: 1fr 1fr; } }
+  .why { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 900px) {
+    .why { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .card--wide { grid-column: span 2; grid-row: span 2; }
+  }
 
   .card {
     background: var(--psd-bg);
     border: 1px solid #e2eaf4;
     border-radius: var(--r-md);
-    padding: 24px;
+    padding: clamp(22px, 2.5vw, 30px);
+    display: flex; flex-direction: column;
   }
-  .card--wide { grid-column: 1 / -1; }
 
   .card__icon {
-    width: 42px;
-    height: 42px;
-    border-radius: var(--r-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
+    width: 44px; height: 44px; border-radius: var(--r-sm);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
   }
   .card__icon--blue { background: var(--psd-blue-100); color: var(--psd-accent); }
   .card__icon--savings { background: var(--psd-savings-soft); color: var(--psd-savings); }
 
-  /* La cifra sustituye al ícono cuando el dato es el argumento. */
-  .card__figure {
-    font-family: 'Fraunces', Georgia, serif;
-    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 144;
-    font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
-    font-weight: 600;
-    line-height: .92;
-    letter-spacing: -0.04em;
-    color: var(--psd-savings);
-    margin: 0 0 10px;
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .card__figure-note {
-    font-family: 'Inter', sans-serif;
-    font-size: var(--t-small);
-    font-weight: 500;
-    letter-spacing: 0;
-    color: var(--psd-ink-soft);
-  }
-
-  .card--savings {
-    background: var(--psd-savings-soft);
-    border-color: #c8e6d5;
-  }
-
   .card__title {
-    font-size: var(--t-h3);
-    font-weight: 700;
+    font-size: var(--t-h3); font-weight: 700;
     color: var(--psd-primary);
-    letter-spacing: -0.015em;
-    line-height: 1.3;
-    margin: 0 0 7px;
+    letter-spacing: -0.015em; line-height: 1.3;
+    margin: 0 0 8px;
   }
   .card__text {
-    font-size: var(--t-small);
-    color: var(--psd-ink-soft);
-    line-height: 1.68;
-    margin: 0;
-    max-width: 48ch;
+    font-size: var(--t-small); color: var(--psd-ink-soft);
+    line-height: 1.68; margin: 0; max-width: 52ch;
   }
-  .card__text :global(.feature-card__highlight) {
-    font-weight: 700;
-    color: var(--psd-savings);
+  .card__text :global(.feature-card__highlight) { font-weight: 700; color: var(--psd-savings); }
+
+  /* ---------- Tarjeta de ahorro ---------- */
+  .card--savings {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(15,122,70,.10), transparent 60%),
+      var(--psd-savings-soft);
+    border-color: #c8e6d5;
+    gap: clamp(22px, 3vw, 32px);
   }
 
-  /* ---------- Mapa ---------- */
-  .map-frame {
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    border: 1px solid #e2eaf4;
-    box-shadow: var(--shadow-md);
+  /* Cifra y nota en bloques separados: la nota nunca hereda el tamaño de la cifra */
+  .stat { display: flex; flex-direction: column; align-items: flex-start; }
+  .stat__lead {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: .8125rem; font-weight: 600; letter-spacing: .02em;
+    color: var(--psd-savings); margin-bottom: 4px;
   }
-  .map-frame iframe { width: 100%; height: 300px; border: 0; display: block; }
-  @media (min-width: 1024px) { .map-frame iframe { height: 380px; } }
+  .stat__figure {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 144;
+    font-size: clamp(4rem, 2.6rem + 5vw, 6.5rem);
+    font-weight: 600; line-height: .9; letter-spacing: -0.045em;
+    color: var(--psd-primary);
+  }
+  .stat__note {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: .9375rem; font-weight: 500; line-height: 1.4; letter-spacing: 0;
+    color: var(--psd-ink);
+    margin-top: 10px; max-width: 30ch;
+  }
 
-  .map-note {
-    margin: 14px 0 0;
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    font-size: var(--t-small);
-    color: var(--psd-ink-soft);
-    line-height: 1.5;
+  .bars { display: grid; gap: 12px; max-width: 520px; }
+  .bar { display: grid; gap: 6px; }
+  .bar__label { font-size: var(--t-micro); font-weight: 600; color: var(--psd-ink-soft); }
+  .bar__label--to { color: var(--psd-savings); }
+  .bar__track {
+    display: block; height: 12px; border-radius: var(--r-chip);
+    background: rgba(12,27,42,.06); overflow: hidden;
   }
-  .map-note :global(.material-symbols-outlined) { color: var(--psd-accent); flex-shrink: 0; }
-  .map-note :global(strong) { color: var(--psd-primary); font-weight: 600; }
+  .bar__fill { display: block; height: 100%; width: var(--w); border-radius: inherit; }
+  .bar__fill--from { background: #b9c4d0; }
+  .bar__fill--to { background: var(--psd-savings); }
+
+  /* Desktop: cifra y barras lado a lado, sin hueco vacío */
+  @media (min-width: 1100px) {
+    .card--savings {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      column-gap: 40px;
+      align-content: space-between;
+    }
+    .card--savings .bars { align-self: end; max-width: none; }
+    .card--savings .card__body { grid-column: 1 / -1; }
+  }
+
+  .card__body { margin-top: auto; }
+  .card--savings .card__title { font-size: clamp(1.25rem, 1.05rem + .8vw, 1.6rem); }
 </style>

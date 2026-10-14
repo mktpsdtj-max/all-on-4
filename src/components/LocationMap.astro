@@ -1,0 +1,94 @@
+---
+// Ubicación — justo antes del CTA: resuelve "¿qué tan lejos está?"
+// en el momento en que el paciente decide si agenda.
+import { useTranslations, contact, type Lang } from '../i18n/ui';
+
+export interface LocationFact { icon: string; label: string; }
+
+export interface LocationData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  text: string;
+  facts: LocationFact[];
+  directionsCta: string;
+}
+
+interface Props { lang: Lang; data: LocationData; }
+const { lang, data } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id={data.id} class="section">
+  <div class="container loc">
+    <div class="loc__copy psd-reveal">
+      <span class="section-eyebrow">{data.eyebrow}</span>
+      <h2 class="section-heading">{data.heading}</h2>
+      <p class="section-text">{data.text}</p>
+
+      <ul class="facts">
+        {data.facts.map((f) => (
+          <li class="fact">
+            <span class="fact__icon"><span class="material-symbols-outlined">{f.icon}</span></span>
+            <span class="fact__label">{f.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a href={contact.directions} class="btn btn--accent" target="_blank" rel="noopener">
+        <span class="material-symbols-outlined" style="font-size:20px;">directions</span>
+        {data.directionsCta}
+      </a>
+    </div>
+
+    <div class="loc__map">
+      <div class="map-frame">
+        <iframe
+          src={contact.mapEmbed}
+          title={t('map.title')}
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+      </div>
+      <p class="map-note">
+        <span class="material-symbols-outlined">directions_walk</span>
+        <span set:html={t('map.note')} />
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .loc { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  @media (min-width: 1024px) { .loc { grid-template-columns: 1fr 1.25fr; } }
+  .loc__copy, .loc__map { min-width: 0; }
+
+  .facts { list-style: none; margin: 28px 0 32px; padding: 0; display: grid; gap: 14px; }
+  .fact { display: flex; align-items: center; gap: 14px; }
+  .fact__icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: var(--r-sm);
+    display: grid; place-items: center;
+    background: var(--psd-blue-100); color: var(--psd-accent);
+  }
+  .fact__icon :global(.material-symbols-outlined) { font-size: 20px; }
+  .fact__label { font-size: .9375rem; font-weight: 600; color: var(--psd-ink); }
+
+  .map-frame {
+    border-radius: var(--r-lg); overflow: hidden;
+    border: 1px solid #e2eaf4;
+    box-shadow: var(--shadow-lg);
+    background: var(--psd-surface-sunk);
+  }
+  .map-frame iframe { width: 100%; height: 340px; border: 0; display: block; }
+  @media (min-width: 1024px) { .map-frame iframe { height: 460px; } }
+
+  .map-note {
+    margin: 14px 0 0;
+    display: flex; align-items: center; gap: 10px;
+    font-size: var(--t-small); color: var(--psd-ink-soft);
+  }
+  .map-note :global(.material-symbols-outlined) { color: var(--psd-accent); flex-shrink: 0; }
+  .map-note :global(strong) { color: var(--psd-primary); font-weight: 600; }
+</style>
