@@ -36,12 +36,16 @@ const IMG = {
   // --- Casos antes/después ---
   // Reemplaza cada par por las fotos reales. Mismo encuadre, misma
   // luz y mismo fondo en las dos tomas de cada paciente.
-  ba1Before: '/casos/caso-1-antes.jpg',
-  ba1After: '/casos/caso-1-despues.jpg',
-  ba2Before: '/casos/caso-2-antes.jpg',
-  ba2After: '/casos/caso-2-despues.jpg',
-  ba3Before: '/casos/caso-3-antes.jpg',
-  ba3After: '/casos/caso-3-despues.jpg',
+  ba1Before: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-before.jpg',
+  ba1After: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-after.jpg',
+  ba2Before: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-before-2.jpg',
+  ba2After: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-after-2.jpg',
+  ba3Before: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-before-3.jpg',
+  ba3After: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/allon4-after-3.jpg',
+  ba4After: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/0746CC2F-E935-4F18-987B-651621740B0D.png',
+  ba4Before:'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/06493A76-1EC4-4074-B3F3-58DAB5A05634.png',
+   ba5After: 'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/7C618B97-9E71-4665-8A8F-76A0D603D960.png',
+  ba5Before:'https://raw.githubusercontent.com/mktpsdtj-max/all-on-4/refs/heads/main/src/assets/allon4/403433D2-E5F8-4AD8-A7A1-A518C18D611E.png'
 };
 
 // ============================================================
@@ -222,8 +226,18 @@ const es: PageContent = {
         note: 'Arcada completa · una sola visita',
       },
       {
-        before: { src: IMG.ba3Before, alt: 'Paciente antes del tratamiento All-on-4' },
-        after: { src: IMG.ba3After, alt: 'El mismo paciente tras la rehabilitación' },
+        before: { src: IMG.ba3After, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba3Before, alt: 'El mismo paciente tras la rehabilitación' },
+        note: 'Superior e inferior · dos visitas',
+      },
+       {
+        before: { src: IMG.ba4After, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba4Before, alt: 'El mismo paciente tras la rehabilitación' },
+        note: 'Superior e inferior · dos visitas',
+      },
+       {
+        before: { src: IMG.ba5Before, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba5After, alt: 'El mismo paciente tras la rehabilitación' },
         note: 'Superior e inferior · dos visitas',
       },
     ],
