@@ -1,6 +1,17 @@
 ---
-// Sección oscura con tarjetas de beneficios.
-export interface Benefit { icon: string; title: string; text: string; }
+// Beneficios en bento grid.
+// Antes: 5 tarjetas idénticas en fila, todas con el mismo peso visual —
+// el lector no sabe cuál importa. Ahora la primera (same-day, el
+// argumento que cierra la venta) ocupa el doble y lleva el acento
+// cálido; las demás quedan como soporte.
+
+export interface Benefit {
+  icon: string;
+  title: string;
+  text: string;
+  /** La celda grande del bento. Solo una. */
+  featured?: boolean;
+}
 
 export interface BenefitsData {
   id: string;
@@ -11,55 +22,85 @@ export interface BenefitsData {
 
 interface Props { data: BenefitsData; }
 const { data } = Astro.props;
-const isOdd = data.items.length % 3 === 2;
 ---
 
 <section id={data.id} class="section section--dark">
   <div class="container">
-    <div class="section-intro psd-reveal">
+    <div class="section-intro section-intro--wide psd-reveal">
       <span class="section-eyebrow section-eyebrow--light">{data.eyebrow}</span>
       <h2 class="section-heading section-heading--light">{data.heading}</h2>
     </div>
 
-    <div class="benefits-grid">
-      {data.items.map((item, i) => (
-        <div
-          class:list={[
-            'psd-reveal',
-            'benefit-card',
-            isOdd && i === data.items.length - 1 && 'benefit-card--last',
-          ]}
-        >
-          <span class="material-symbols-outlined">{item.icon}</span>
-          <h3 class="benefit-card__title">{item.title}</h3>
-          <p class="benefit-card__text">{item.text}</p>
-        </div>
+    <div class="bento">
+      {data.items.map((item) => (
+        <article class:list={['cell', item.featured && 'cell--featured']}>
+          <span class="cell__icon material-symbols-outlined">{item.icon}</span>
+          <h3 class="cell__title">{item.title}</h3>
+          <p class="cell__text">{item.text}</p>
+        </article>
       ))}
     </div>
   </div>
 </section>
 
 <style>
-  .benefits-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 640px) { .benefits-grid { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1024px) { .benefits-grid { grid-template-columns: 1fr 1fr 1fr; } }
-
-  .benefit-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 24px;
+  .bento { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 640px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) {
+    .bento { grid-template-columns: repeat(3, 1fr); gap: 16px; }
   }
-  .benefit-card :global(.material-symbols-outlined) {
+
+  .cell {
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--r-md);
+    padding: 26px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cell__icon {
     color: var(--psd-blue-200);
-    font-size: 30px;
-    margin-bottom: 16px;
-    display: block;
+    font-size: 26px;
+    margin-bottom: 4px;
   }
-  .benefit-card__title { color: #fff; font-size: 16px; font-weight: 700; margin: 0 0 8px; }
-  .benefit-card__text { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; margin: 0; }
+  .cell__title {
+    color: #fff;
+    font-size: var(--t-h3);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    margin: 0;
+  }
+  .cell__text {
+    font-size: var(--t-small);
+    color: rgba(255,255,255,.66);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 44ch;
+  }
 
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .benefit-card--last { grid-column: 1 / -1; max-width: 50%; margin: 0 auto; }
+  /* ---------- Celda destacada ---------- */
+  .cell--featured {
+    background:
+      radial-gradient(120% 140% at 0% 0%, rgba(200,135,31,.22) 0%, rgba(200,135,31,0) 55%),
+      rgba(255,255,255,.07);
+    border-color: rgba(200,135,31,.4);
+    padding: 30px 28px;
+  }
+  @media (min-width: 640px) { .cell--featured { grid-column: span 2; } }
+
+  .cell--featured .cell__icon { color: var(--psd-day); font-size: 32px; }
+  .cell--featured .cell__title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 70;
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.125rem);
+    letter-spacing: -0.022em;
+  }
+  .cell--featured .cell__text {
+    font-size: var(--t-body);
+    color: rgba(255,255,255,.78);
+    max-width: 52ch;
   }
 </style>
