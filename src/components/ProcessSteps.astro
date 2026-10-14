@@ -1,0 +1,106 @@
+---
+// Proceso de 3 pasos. `connector` decide si se dibuja una línea continua o flechas sueltas.
+export interface ProcessStep { icon: string; eyebrow: string; title: string; text: string; }
+
+export interface ProcessData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  /** 'arrows' = flechas sueltas (All-on-4) · 'line' = línea continua */
+  connector?: 'arrows' | 'line';
+  steps: ProcessStep[];
+}
+
+interface Props { data: ProcessData; }
+const { data } = Astro.props;
+const connector = data.connector ?? 'arrows';
+---
+
+<section id={data.id} class="section">
+  <div class="container">
+    <div class="section-intro psd-reveal">
+      <span class="section-eyebrow">{data.eyebrow}</span>
+      <h2 class="section-heading">{data.heading}</h2>
+    </div>
+
+    <div class="process-wrap">
+      {connector === 'line' && <div class="process-line"></div>}
+      {connector === 'arrows' && (
+        <>
+          <span class="process-arrow process-arrow--1">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+          </span>
+          <span class="process-arrow process-arrow--2">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+          </span>
+        </>
+      )}
+
+      {data.steps.map((step) => (
+        <div class="psd-reveal process-step">
+          <div class="process-icon"><span class="material-symbols-outlined">{step.icon}</span></div>
+          <span class="process-step__eyebrow">{step.eyebrow}</span>
+          <h3 class="process-step__title">{step.title}</h3>
+          <p class="process-step__text">{step.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .process-wrap { position: relative; display: grid; grid-template-columns: 1fr; gap: 40px; }
+  @media (min-width: 1024px) { .process-wrap { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .process-line { display: none; }
+  .process-arrow { display: none; }
+
+  @media (min-width: 1024px) {
+    /* La fórmula compensa el gap de 40px para que la línea toque el centro de cada ícono */
+    .process-line {
+      display: block;
+      position: absolute;
+      top: 32px;
+      left: calc(100% / 6 - 13.34px);
+      right: calc(100% / 6 - 13.34px);
+      height: 2px;
+      background: var(--psd-blue-100);
+    }
+    .process-arrow {
+      display: flex;
+      position: absolute;
+      top: 32px;
+      transform: translate(-50%, -50%);
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--psd-blue-100);
+      color: var(--psd-accent);
+      z-index: 2;
+    }
+    .process-arrow--1 { left: calc(100% / 3 - 6.67px); }
+    .process-arrow--2 { left: calc(200% / 3 + 6.67px); }
+  }
+
+  .process-step { position: relative; }
+  .process-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid var(--psd-blue-100);
+    box-shadow: var(--shadow-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .process-icon :global(.material-symbols-outlined) { color: var(--psd-accent); font-size: 24px; }
+  .process-step__eyebrow { font-size: 12px; font-weight: 700; color: var(--psd-accent); }
+  .process-step__title { font-size: 18px; font-weight: 700; color: var(--psd-primary); margin: 4px 0 8px; }
+  .process-step__text { font-size: 14px; color: var(--psd-text-muted); line-height: 1.6; margin: 0; }
+</style>

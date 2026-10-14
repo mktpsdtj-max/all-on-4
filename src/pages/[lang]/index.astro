@@ -1,0 +1,43 @@
+---
+// ============================================================
+// Genera /es/ y /en/ — este subdominio es solo All-on-4.
+// ============================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroCentered from '../../components/heroes/HeroCentered.astro';
+import WhyTijuana from '../../components/WhyTijuana.astro';
+import SystemSection from '../../components/SystemSection.astro';
+import BenefitsGrid from '../../components/BenefitsGrid.astro';
+import ProcessSteps from '../../components/ProcessSteps.astro';
+import StoriesGallery from '../../components/StoriesGallery.astro';
+import CtaFinal from '../../components/CtaFinal.astro';
+import content, { type PageContent } from '../../data/content';
+import type { Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return (Object.keys(content) as Lang[]).map((lang) => ({
+    params: { lang },
+    props: { lang, data: content[lang] },
+  }));
+}
+
+interface Props { lang: Lang; data: PageContent; }
+const { lang, data } = Astro.props;
+
+const altHref = lang === 'es' ? '/en/' : '/es/';
+---
+
+<BaseLayout
+  lang={lang}
+  title={data.seo.title}
+  description={data.seo.description}
+  navLinks={data.nav}
+  altHref={altHref}
+>
+  <HeroCentered data={data.hero} />
+  <WhyTijuana lang={lang} data={data.why} />
+  <SystemSection lang={lang} data={data.system} />
+  <BenefitsGrid data={data.benefits} />
+  <ProcessSteps data={data.process} />
+  <StoriesGallery lang={lang} data={data.stories} />
+  <CtaFinal lang={lang} data={data.cta} />
+</BaseLayout>

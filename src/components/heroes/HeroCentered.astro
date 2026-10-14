@@ -1,0 +1,142 @@
+---
+// HERO V2 — foto a sangre completa, texto centrado. Usado en All-on-4.
+export interface HeroCenteredData {
+  variant: 'centered';
+  bg: string;
+  badge: string;
+  titleBefore: string;
+  titleAccent: string;
+  titleAfter?: string;
+  subtitle: string;
+  primaryCta: string;
+  secondaryCta: string;
+  trust: { icon: string; label: string }[];
+}
+
+interface Props { data: HeroCenteredData; }
+const { data } = Astro.props;
+---
+
+<section class="hero-v2">
+  <div class="hero-v2__bg" style={`background-image: url('${data.bg}');`}></div>
+  <div class="hero-v2__overlay"></div>
+  <div class="hero-v2__content">
+    <div class="hero-v2__badge">
+      <span class="hero-v2__badge-dot psd-pulse-dot"></span>
+      <span class="hero-v2__badge-text">{data.badge}</span>
+    </div>
+
+    <h1 class="hero-v2__title">
+      {data.titleBefore} <span class="hero-v2__title-accent">{data.titleAccent}</span> {data.titleAfter}
+    </h1>
+
+    <p class="hero-v2__subtitle">{data.subtitle}</p>
+
+    <div class="hero-v2__actions">
+      <a href="#contacto" class="btn btn--accent">
+        {data.primaryCta}
+        <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+      </a>
+      <a href="#por-que-tijuana" class="btn btn--outline">
+        {data.secondaryCta}
+        <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="hero-v2__trust">
+      {data.trust.map((chip) => (
+        <span class="hero-v2__trust-chip">
+          <span class="material-symbols-outlined">{chip.icon}</span> {chip.label}
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-v2 {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) { .hero-v2 { min-height: 640px; } }
+
+  .hero-v2__bg { position: absolute; inset: 0; background-size: cover; background-position: center 30%; }
+  .hero-v2__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,20,40,0.45) 0%, rgba(0,20,40,0.72) 65%, rgba(0,20,40,0.85) 100%);
+  }
+  .hero-v2__content {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 96px 24px 56px;
+    text-align: center;
+  }
+  .hero-v2__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    margin-bottom: 24px;
+  }
+  .hero-v2__badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--psd-blue-200); }
+  .hero-v2__badge-text { font-size: 12px; font-weight: 500; color: #fff; }
+
+  .hero-v2__title {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 20px;
+  }
+  @media (min-width: 640px) { .hero-v2__title { font-size: 42px; } }
+  @media (min-width: 1024px) { .hero-v2__title { font-size: 50px; } }
+  .hero-v2__title-accent { color: var(--psd-blue-200); }
+
+  .hero-v2__subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.6;
+    margin: 0 auto 32px;
+    max-width: 560px;
+  }
+  .hero-v2__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .hero-v2__trust {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .hero-v2__trust-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 12px;
+    border-radius: 9999px;
+  }
+  .hero-v2__trust-chip :global(.material-symbols-outlined) { font-size: 16px; color: var(--psd-blue-200); }
+</style>

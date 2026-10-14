@@ -1,0 +1,173 @@
+---
+// Prueba social: galería slide donde cada diapositiva es un grid de 3 imágenes.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+export interface StoriesData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  intro: string;
+  /** Cada grupo son 3 imágenes que cambian juntas */
+  groups: { src: string; alt: string }[][];
+}
+
+interface Props { lang: Lang; data: StoriesData; }
+const { lang, data } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id={data.id} class="section section--white">
+  <div class="container">
+    <div class="section-intro psd-reveal">
+      <span class="section-eyebrow">{data.eyebrow}</span>
+      <h2 class="section-heading stories-heading">{data.heading}</h2>
+      <p class="section-text stories-intro">{data.intro}</p>
+    </div>
+
+    <div class="psd-reveal stories-toolbar">
+      <span class="stories-toolbar-label">{t('stories.toolbarLabel')}</span>
+      <div class="stories-arrows">
+        <button type="button" class="stories-arrow-btn" data-stories-prev aria-label={t('gallery.prev')}>
+          <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
+        </button>
+        <button type="button" class="stories-arrow-btn" data-stories-next aria-label={t('gallery.next')}>
+          <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="psd-reveal stories-gallery" id="psd-stories-gallery">
+      {data.groups.map((group, gi) => (
+        <div class:list={['stories-gallery-slide', gi === 0 && 'is-active']} data-idx={gi}>
+          {group.map((img) => (
+            <div class="stories-gallery-item">
+              <img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div class="stories-gallery-dots">
+        {data.groups.map((_, gi) => (
+          <button
+            type="button"
+            class:list={[gi === 0 && 'is-active']}
+            data-idx={gi}
+            aria-label={`${t('gallery.group')} ${gi + 1}`}
+          ></button>
+        ))}
+      </div>
+    </div>
+
+    <p class="stories-gallery-caption">{t('stories.caption')}</p>
+  </div>
+</section>
+
+<style>
+  .stories-heading { margin-bottom: 16px; }
+  .stories-intro { margin-top: 0; }
+
+  .stories-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .stories-toolbar-label { font-size: 14px; font-weight: 600; color: var(--psd-primary); }
+  .stories-arrows { display: flex; gap: 10px; }
+  .stories-arrow-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--psd-blue-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--psd-primary);
+    transition: background-color 0.2s ease;
+  }
+  .stories-arrow-btn:hover { background: var(--psd-blue-100); }
+
+  .stories-gallery {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 16 / 6.2;
+  }
+  .stories-gallery-slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  @media (min-width: 640px) { .stories-gallery-slide { gap: 16px; } }
+  .stories-gallery-slide.is-active { opacity: 1; }
+
+  .stories-gallery-item {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+  }
+  .stories-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .stories-gallery-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+  }
+  .stories-gallery-dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .stories-gallery-dots button.is-active { background: #fff; transform: scale(1.25); }
+
+  .stories-gallery-caption { text-align: center; font-size: 12px; color: var(--psd-text-muted); margin-top: 12px; }
+</style>
+
+<script>
+  const gallery = document.getElementById('psd-stories-gallery');
+  if (gallery) {
+    const slides = gallery.querySelectorAll('.stories-gallery-slide');
+    const dots = gallery.querySelectorAll<HTMLButtonElement>('.stories-gallery-dots button');
+    const prevBtn = document.querySelector<HTMLButtonElement>('[data-stories-prev]');
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-stories-next]');
+    let current = 0;
+    let timer: number;
+
+    const goTo = (i: number) => {
+      const idx = (i + slides.length) % slides.length;
+      slides.forEach((s) => s.classList.remove('is-active'));
+      dots.forEach((d) => d.classList.remove('is-active'));
+      slides[idx].classList.add('is-active');
+      dots[idx].classList.add('is-active');
+      current = idx;
+    };
+
+    const restart = () => {
+      clearInterval(timer);
+      timer = window.setInterval(() => goTo(current + 1), 4500);
+    };
+
+    dots.forEach((dot) =>
+      dot.addEventListener('click', () => { goTo(Number(dot.dataset.idx)); restart(); })
+    );
+    prevBtn?.addEventListener('click', () => { goTo(current - 1); restart(); });
+    nextBtn?.addEventListener('click', () => { goTo(current + 1); restart(); });
+
+    restart();
+  }
+</script>
