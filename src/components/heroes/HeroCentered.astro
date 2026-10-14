@@ -1,142 +1,262 @@
 ---
-// HERO V2 — foto a sangre completa, texto centrado. Usado en All-on-4.
+// HERO — grid de dos columnas: texto a la izquierda, video a la derecha.
+// Debajo, a todo lo ancho, la jornada del paciente.
+//
+// El argumento de venta del All-on-4 es el tiempo: entras con un
+// problema y sales con dientes el mismo día. Eso deja de ser una
+// frase y pasa a ser la estructura visual del hero.
+
+import VideoFrame, { type VideoData } from '../VideoFrame.astro';
+import type { Lang } from '../../i18n/ui';
+
+export interface DayStop { time: string; label: string; }
+
 export interface HeroCenteredData {
   variant: 'centered';
+  /** Foto de fondo, muy atenuada: textura, no protagonista. */
   bg: string;
   badge: string;
-  titleBefore: string;
-  titleAccent: string;
-  titleAfter?: string;
+  /** Titular en dos actos: la línea corta prepara, la larga remata. */
+  titleLead: string;
+  titleMain: string;
   subtitle: string;
   primaryCta: string;
   secondaryCta: string;
-  trust: { icon: string; label: string }[];
+  video: VideoData;
+  /** La jornada real del paciente. 3 paradas. */
+  day: DayStop[];
+  dayLabel: string;
 }
 
-interface Props { data: HeroCenteredData; }
-const { data } = Astro.props;
+interface Props { lang: Lang; data: HeroCenteredData; }
+const { lang, data } = Astro.props;
 ---
 
-<section class="hero-v2">
-  <div class="hero-v2__bg" style={`background-image: url('${data.bg}');`}></div>
-  <div class="hero-v2__overlay"></div>
-  <div class="hero-v2__content">
-    <div class="hero-v2__badge">
-      <span class="hero-v2__badge-dot psd-pulse-dot"></span>
-      <span class="hero-v2__badge-text">{data.badge}</span>
+<section class="hero">
+  <div class="hero__bg" style={`background-image: url('${data.bg}');`}></div>
+  <div class="hero__scrim"></div>
+
+  <div class="container hero__inner">
+    <div class="hero__grid">
+      <!-- Columna izquierda: el argumento -->
+      <div class="hero__copy">
+        <p class="hero__badge">
+          <span class="hero__badge-dot psd-pulse-dot"></span>
+          {data.badge}
+        </p>
+
+        <h1 class="hero__title display">
+          <span class="hero__title-lead">{data.titleLead}</span>
+          {data.titleMain}
+        </h1>
+
+        <p class="hero__sub">{data.subtitle}</p>
+
+        <div class="hero__actions">
+          <a href="#contacto" class="btn btn--accent">{data.primaryCta}</a>
+          <a href="#por-que-tijuana" class="btn btn--ghost-light">{data.secondaryCta}</a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: el video -->
+      <div class="hero__media">
+        <VideoFrame lang={lang} video={data.video} ratio="4 / 4.6" />
+      </div>
     </div>
 
-    <h1 class="hero-v2__title">
-      {data.titleBefore} <span class="hero-v2__title-accent">{data.titleAccent}</span> {data.titleAfter}
-    </h1>
-
-    <p class="hero-v2__subtitle">{data.subtitle}</p>
-
-    <div class="hero-v2__actions">
-      <a href="#contacto" class="btn btn--accent">
-        {data.primaryCta}
-        <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
-      </a>
-      <a href="#por-que-tijuana" class="btn btn--outline">
-        {data.secondaryCta}
-        <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
-      </a>
-    </div>
-
-    <div class="hero-v2__trust">
-      {data.trust.map((chip) => (
-        <span class="hero-v2__trust-chip">
-          <span class="material-symbols-outlined">{chip.icon}</span> {chip.label}
-        </span>
-      ))}
+    <!-- La jornada: no son "chips de confianza" genéricos, es el
+         horario real de un paciente. Informa y vende al mismo tiempo. -->
+    <div class="day">
+      <p class="day__label">{data.dayLabel}</p>
+      <ol class="day__track">
+        {data.day.map((stop) => (
+          <li class="day__stop">
+            <span class="day__time">{stop.time}</span>
+            <span class="day__text">{stop.label}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   </div>
 </section>
 
 <style>
-  .hero-v2 {
+  .hero {
     position: relative;
-    min-height: 560px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
+    background: var(--psd-primary-dark);
   }
-  @media (min-width: 768px) { .hero-v2 { min-height: 640px; } }
 
-  .hero-v2__bg { position: absolute; inset: 0; background-size: cover; background-position: center 30%; }
-  .hero-v2__overlay {
+  /* La foto queda como textura de fondo, no como protagonista:
+     el video de la derecha es quien manda en este hero. */
+  .hero__bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,20,40,0.45) 0%, rgba(0,20,40,0.72) 65%, rgba(0,20,40,0.85) 100%);
+    background-size: cover;
+    background-position: 70% 30%;
+    opacity: .28;
   }
-  .hero-v2__content {
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(105deg, rgba(0,20,42,.96) 0%, rgba(0,20,42,.86) 45%, rgba(0,27,60,.72) 100%);
+  }
+
+  .hero__inner {
     position: relative;
     z-index: 1;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 96px 24px 56px;
-    text-align: center;
+    padding-top: clamp(3rem, 7vw, 5.5rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
   }
-  .hero-v2__badge {
+
+  /* ---------- Grid principal ---------- */
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .hero__grid { grid-template-columns: 1.08fr 1fr; gap: 4.5rem; }
+  }
+
+  .hero__copy { min-width: 0; }
+
+  .hero__badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 9999px;
-    padding: 6px 16px;
-    margin-bottom: 24px;
+    gap: 10px;
+    margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+    font-size: var(--t-small);
+    font-weight: 500;
+    color: rgba(255,255,255,.92);
   }
-  .hero-v2__badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--psd-blue-200); }
-  .hero-v2__badge-text { font-size: 12px; font-weight: 500; color: #fff; }
+  .hero__badge-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--psd-day);
+    flex-shrink: 0;
+  }
 
-  .hero-v2__title {
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+  .hero__title {
     color: #fff;
-    margin: 0 0 20px;
+    /* Algo más contenido que el display completo: comparte ancho
+       con el video, así que no puede comerse la columna. */
+    font-size: clamp(2.25rem, 1.3rem + 3.2vw, 4rem);
+    margin: 0 0 clamp(1rem, 2vw, 1.375rem);
+    max-width: 15ch;
+    text-wrap: balance;
   }
-  @media (min-width: 640px) { .hero-v2__title { font-size: 42px; } }
-  @media (min-width: 1024px) { .hero-v2__title { font-size: 50px; } }
-  .hero-v2__title-accent { color: var(--psd-blue-200); }
+  /* El contraste es de peso y escala, no de color sobre una palabra. */
+  .hero__title-lead {
+    display: block;
+    font-size: .46em;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    color: rgba(255,255,255,.72);
+    margin-bottom: .35em;
+  }
 
-  .hero-v2__subtitle {
-    font-size: 16px;
-    color: rgba(255,255,255,0.88);
+  .hero__sub {
+    font-size: var(--t-lead);
+    color: rgba(255,255,255,.82);
     line-height: 1.6;
-    margin: 0 auto 32px;
-    max-width: 560px;
+    margin: 0 0 clamp(1.75rem, 3vw, 2.25rem);
+    max-width: 44ch;
   }
-  .hero-v2__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 32px;
+
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  .hero__media { min-width: 0; }
+
+  /* ---------- La jornada ---------- */
+  .day {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid rgba(255,255,255,.22);
+    padding-top: 22px;
   }
-  .hero-v2__trust {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+  .day__label {
+    margin: 0 0 16px;
+    font-size: var(--t-micro);
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: var(--psd-day);
   }
-  .hero-v2__trust-chip {
+  .day__track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+  @media (min-width: 720px) {
+    .day__track { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  }
+
+  .day__stop {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    flex-direction: column;
+    gap: 3px;
+    position: relative;
+    padding-left: 20px;
+  }
+  /* Marca de hora: punto en móvil, punto sobre la línea en desktop */
+  .day__stop::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .5em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--psd-day);
+  }
+  @media (min-width: 720px) {
+    .day__stop { padding-left: 0; padding-top: 24px; }
+    .day__stop::before { top: 0; left: 0; }
+    /* La línea conecta cada parada con la siguiente */
+    .day__stop:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 3.5px;
+      left: 8px;
+      right: 12px;
+      height: 1px;
+      background: rgba(255,255,255,.28);
+    }
+  }
+
+  .day__time {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 40;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: #fff;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 6px 12px;
-    border-radius: 9999px;
+    letter-spacing: -0.01em;
   }
-  .hero-v2__trust-chip :global(.material-symbols-outlined) { font-size: 16px; color: var(--psd-blue-200); }
+  .day__text {
+    font-size: var(--t-small);
+    color: rgba(255,255,255,.7);
+    max-width: 26ch;
+  }
+
+  /* Entrada orquestada: un solo momento, escalonado, al cargar. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__badge, .hero__title, .hero__sub, .hero__actions, .hero__media, .day {
+      animation: hero-in .7s cubic-bezier(.2, .7, .3, 1) backwards;
+    }
+    .hero__badge   { animation-delay: .05s; }
+    .hero__title   { animation-delay: .14s; }
+    .hero__sub     { animation-delay: .24s; }
+    .hero__actions { animation-delay: .32s; }
+    .hero__media   { animation-delay: .20s; }
+    .day           { animation-delay: .42s; }
+  }
+  @keyframes hero-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
 </style>

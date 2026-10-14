@@ -1,8 +1,3 @@
-// ============================================================
-// Cadenas de interfaz compartidas por todas las páginas.
-// El copy de cada tratamiento vive en src/data/treatments.ts
-// ============================================================
-
 export const languages = {
   es: 'Español',
   en: 'English',
@@ -25,13 +20,11 @@ export const ui = {
     'video.close': 'Cerrar video',
     'video.empty':
       'Agrega la URL de tu video en el atributo <code>data-video-src</code> de este componente para activar la reproducción.',
-    'gallery.prev': 'Anterior',
-    'gallery.next': 'Siguiente',
-    'gallery.group': 'Grupo',
-    'gallery.image': 'Imagen',
-    'stories.toolbarLabel': 'Testimonios de pacientes',
-    'stories.caption':
-      'Fotografías de referencia — reemplazar con casos e historias reales de pacientes.',
+    'ba.before': 'Antes',
+    'ba.after': 'Después',
+    'ba.slider': 'Comparación antes y después',
+    'ba.case': 'Caso',
+    'ba.hint': 'Arrastra cada foto para comparar. Pacientes reales, publicados con su consentimiento.',
     'contact.tollFree': 'Toll Free US/MX',
     'contact.whatsapp': 'WhatsApp',
     'contact.border': 'Cruce Fronterizo',
@@ -50,12 +43,11 @@ export const ui = {
     'video.close': 'Close video',
     'video.empty':
       'Add your video URL to the <code>data-video-src</code> attribute on this component to enable playback.',
-    'gallery.prev': 'Previous',
-    'gallery.next': 'Next',
-    'gallery.group': 'Group',
-    'gallery.image': 'Image',
-    'stories.toolbarLabel': 'Patient testimonials',
-    'stories.caption': 'Reference photos — replace with real patient cases and stories.',
+       'ba.before': 'Before',
+    'ba.after': 'After',
+    'ba.slider': 'Before and after comparison',
+    'ba.case': 'Case',
+    'ba.hint': 'Drag each photo to compare. Real patients, published with their consent.',
     'contact.tollFree': 'Toll Free US/MX',
     'contact.whatsapp': 'WhatsApp',
     'contact.border': 'Border Crossing',

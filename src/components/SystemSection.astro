@@ -1,8 +1,4 @@
 ---
-// "¿Qué es el sistema All-on-4?" — video + explicación con pestañas.
-// Las pestañas pasan de píldoras sueltas a un control segmentado
-// real, con el panel visiblemente unido al grupo: así se lee como
-// un solo objeto y no como tres botones flotando sobre una caja.
 
 import VideoFrame, { type VideoData } from './VideoFrame.astro';
 import type { Lang } from '../i18n/ui';
@@ -26,11 +22,6 @@ const { lang, data } = Astro.props;
 
 <section id={data.id} class="section">
   <div class="container grid">
-    <div class="media">
-      <VideoFrame lang={lang} video={data.video} ratio={data.videoRatio ?? '1 / 1'} />
-      {data.caption && <p class="media__caption">{data.caption}</p>}
-    </div>
-
     <div class="copy psd-reveal">
       <span class="section-eyebrow">{data.eyebrow}</span>
       <h2 class="section-heading">{data.heading}</h2>
@@ -71,17 +62,20 @@ const { lang, data } = Astro.props;
         </div>
       )}
     </div>
+
+    <div class="media">
+      <VideoFrame lang={lang} video={data.video} ratio={data.videoRatio ?? '1 / 1'} />
+      {data.caption && <p class="media__caption">{data.caption}</p>}
+    </div>
   </div>
 </section>
 
 <style>
+  /* Texto a la izquierda, video a la derecha.
+     En móvil el texto va primero: se lee antes de ver el video. */
   .grid { display: grid; grid-template-columns: 1fr; gap: clamp(2.5rem, 5vw, 4rem); align-items: center; }
-  .media { order: 2; }
-  .copy { order: 1; }
   @media (min-width: 1024px) {
-    .grid { grid-template-columns: 1fr 1.05fr; }
-    .media { order: 1; }
-    .copy  { order: 2; }
+    .grid { grid-template-columns: 1.05fr 1fr; }
   }
 
   .media__caption {

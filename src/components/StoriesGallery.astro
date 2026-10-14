@@ -1,14 +1,20 @@
 ---
-// Prueba social: galería slide donde cada diapositiva es un grid de 3 imágenes.
+
 import { useTranslations, type Lang } from '../i18n/ui';
+
+export interface StoryCase {
+  before: { src: string; alt: string };
+  after: { src: string; alt: string };
+  /** Opcional: "Arcada superior", "Caso de 6 meses"… */
+  note?: string;
+}
 
 export interface StoriesData {
   id: string;
   eyebrow: string;
   heading: string;
   intro: string;
-  /** Cada grupo son 3 imágenes que cambian juntas */
-  groups: { src: string; alt: string }[][];
+  cases: StoryCase[];
 }
 
 interface Props { lang: Lang; data: StoriesData; }
@@ -18,156 +24,191 @@ const t = useTranslations(lang);
 
 <section id={data.id} class="section section--white">
   <div class="container">
-    <div class="section-intro psd-reveal">
+    <div class="section-intro section-intro--wide psd-reveal">
       <span class="section-eyebrow">{data.eyebrow}</span>
-      <h2 class="section-heading stories-heading">{data.heading}</h2>
-      <p class="section-text stories-intro">{data.intro}</p>
+      <h2 class="section-heading">{data.heading}</h2>
+      <p class="section-text">{data.intro}</p>
     </div>
 
-    <div class="psd-reveal stories-toolbar">
-      <span class="stories-toolbar-label">{t('stories.toolbarLabel')}</span>
-      <div class="stories-arrows">
-        <button type="button" class="stories-arrow-btn" data-stories-prev aria-label={t('gallery.prev')}>
-          <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span>
-        </button>
-        <button type="button" class="stories-arrow-btn" data-stories-next aria-label={t('gallery.next')}>
-          <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
-        </button>
-      </div>
-    </div>
+    <div class="cases">
+      {data.cases.map((c, i) => (
+        <figure class="ba" style="--pos: 50%">
+          <div class="ba__stage">
+            <img class="ba__img" src={c.before.src} alt={c.before.alt} loading="lazy" decoding="async" />
+            <img class="ba__img ba__img--after" src={c.after.src} alt={c.after.alt} loading="lazy" decoding="async" />
 
-    <div class="psd-reveal stories-gallery" id="psd-stories-gallery">
-      {data.groups.map((group, gi) => (
-        <div class:list={['stories-gallery-slide', gi === 0 && 'is-active']} data-idx={gi}>
-          {group.map((img) => (
-            <div class="stories-gallery-item">
-              <img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
-            </div>
-          ))}
-        </div>
+            <span class="ba__line" aria-hidden="true"></span>
+            <span class="ba__knob" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
+                <path d="M9.5 7 5 12l4.5 5V7Zm5 0v10l4.5-5-4.5-5Z" />
+              </svg>
+            </span>
+
+            <span class="ba__tag ba__tag--before">{t('ba.before')}</span>
+            <span class="ba__tag ba__tag--after">{t('ba.after')}</span>
+
+            <input
+              class="ba__range"
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+              step="0.1"
+              aria-label={`${t('ba.slider')} — ${t('ba.case')} ${i + 1}`}
+            />
+          </div>
+          {c.note && <figcaption class="ba__note">{c.note}</figcaption>}
+        </figure>
       ))}
-
-      <div class="stories-gallery-dots">
-        {data.groups.map((_, gi) => (
-          <button
-            type="button"
-            class:list={[gi === 0 && 'is-active']}
-            data-idx={gi}
-            aria-label={`${t('gallery.group')} ${gi + 1}`}
-          ></button>
-        ))}
-      </div>
     </div>
 
-    <p class="stories-gallery-caption">{t('stories.caption')}</p>
+    <p class="cases__hint">{t('ba.hint')}</p>
   </div>
 </section>
 
 <style>
-  .stories-heading { margin-bottom: 16px; }
-  .stories-intro { margin-top: 0; }
-
-  .stories-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .stories-toolbar-label { font-size: 14px; font-weight: 600; color: var(--psd-primary); }
-  .stories-arrows { display: flex; gap: 10px; }
-  .stories-arrow-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid var(--psd-blue-100);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--psd-primary);
-    transition: background-color 0.2s ease;
+  .cases {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .stories-arrow-btn:hover { background: var(--psd-blue-100); }
+  @media (min-width: 560px) { .cases { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .cases { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
 
-  .stories-gallery {
+  .ba { margin: 0; }
+
+  /* Marco oscuro: las fotos clínicas vienen sobre fondo negro,
+     así el recorte no se nota y el caso se lee como una pieza. */
+  .ba__stage {
     position: relative;
-    max-width: 900px;
-    margin: 0 auto;
-    border-radius: 24px;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--r-md);
     overflow: hidden;
-    aspect-ratio: 16 / 6.2;
+    background: #0a0a0a;
+    box-shadow: var(--shadow-md);
+    isolation: isolate;
   }
-  .stories-gallery-slide {
+
+  .ba__img {
     position: absolute;
     inset: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none;
   }
-  @media (min-width: 640px) { .stories-gallery-slide { gap: 16px; } }
-  .stories-gallery-slide.is-active { opacity: 1; }
 
-  .stories-gallery-item {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow-1);
-  }
-  .stories-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* La foto "después" se recorta desde la izquierda hasta --pos.
+     Mover --pos es todo lo que hace el JS. */
+  .ba__img--after { clip-path: inset(0 0 0 var(--pos)); }
 
-  .stories-gallery-dots {
+  .ba__line {
     position: absolute;
-    bottom: 16px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .18);
+    pointer-events: none;
+  }
+
+  .ba__knob {
+    position: absolute;
+    top: 50%;
+    left: var(--pos);
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .92);
+    color: var(--psd-primary-dark);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    pointer-events: none;
+    transition: transform .14s ease;
+  }
+  .ba__stage:hover .ba__knob { transform: translate(-50%, -50%) scale(1.06); }
+
+  .ba__tag {
+    position: absolute;
+    top: 12px;
+    font-size: var(--t-micro);
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: #fff;
+    background: rgba(8, 20, 34, .62);
+    backdrop-filter: blur(4px);
+    padding: 5px 11px;
+    border-radius: var(--r-chip);
+    pointer-events: none;
+  }
+  .ba__tag--before { left: 12px; }
+  .ba__tag--after  { right: 12px; }
+
+  /* El control real: invisible, encima de todo.
+     Nos da teclado, táctil y lector de pantalla sin escribir nada. */
+  .ba__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: ew-resize;
     z-index: 2;
   }
-  .stories-gallery-dots button {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+  .ba__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 46px;
+    height: 100vh; /* alto para poder arrastrar desde cualquier punto */
+    background: transparent;
+    cursor: ew-resize;
   }
-  .stories-gallery-dots button.is-active { background: #fff; transform: scale(1.25); }
+  .ba__range::-moz-range-thumb {
+    width: 46px;
+    height: 100vh;
+    border: 0;
+    background: transparent;
+    cursor: ew-resize;
+  }
+  .ba__range::-moz-range-track { background: transparent; border: 0; }
 
-  .stories-gallery-caption { text-align: center; font-size: 12px; color: var(--psd-text-muted); margin-top: 12px; }
+  /* El foco se dibuja sobre el marco, no sobre el input invisible */
+  .ba__range:focus-visible { outline: none; }
+  .ba__stage:has(.ba__range:focus-visible) {
+    outline: 3px solid var(--psd-accent);
+    outline-offset: 3px;
+  }
+
+  .ba__note {
+    margin: 10px 2px 0;
+    font-size: var(--t-small);
+    color: var(--psd-ink-soft);
+    line-height: 1.5;
+  }
+
+  .cases__hint {
+    margin: 26px 0 0;
+    font-size: var(--t-small);
+    color: var(--psd-ink-soft);
+    text-align: center;
+  }
 </style>
 
 <script>
-  const gallery = document.getElementById('psd-stories-gallery');
-  if (gallery) {
-    const slides = gallery.querySelectorAll('.stories-gallery-slide');
-    const dots = gallery.querySelectorAll<HTMLButtonElement>('.stories-gallery-dots button');
-    const prevBtn = document.querySelector<HTMLButtonElement>('[data-stories-prev]');
-    const nextBtn = document.querySelector<HTMLButtonElement>('[data-stories-next]');
-    let current = 0;
-    let timer: number;
+  document.querySelectorAll<HTMLElement>('.ba').forEach((card) => {
+    const range = card.querySelector<HTMLInputElement>('.ba__range');
+    if (!range) return;
 
-    const goTo = (i: number) => {
-      const idx = (i + slides.length) % slides.length;
-      slides.forEach((s) => s.classList.remove('is-active'));
-      dots.forEach((d) => d.classList.remove('is-active'));
-      slides[idx].classList.add('is-active');
-      dots[idx].classList.add('is-active');
-      current = idx;
-    };
-
-    const restart = () => {
-      clearInterval(timer);
-      timer = window.setInterval(() => goTo(current + 1), 4500);
-    };
-
-    dots.forEach((dot) =>
-      dot.addEventListener('click', () => { goTo(Number(dot.dataset.idx)); restart(); })
-    );
-    prevBtn?.addEventListener('click', () => { goTo(current - 1); restart(); });
-    nextBtn?.addEventListener('click', () => { goTo(current + 1); restart(); });
-
-    restart();
-  }
+    const apply = () => card.style.setProperty('--pos', `${range.value}%`);
+    range.addEventListener('input', apply);
+    apply();
+  });
 </script>

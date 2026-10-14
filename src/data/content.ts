@@ -34,6 +34,16 @@ const IMG = {
     'https://lh3.googleusercontent.com/aida-public/AB6AXuDkSlZy19tCvBPFuU1gaXbNBUnaUwKr4YlKqcQRgGgi_k1wdOuK2B7FPOrrpzNWXAeZ9ZbVmT0fIoDdSFbA3pqlFHv8jak00_MEKJHmsNA1eIpdRlYcZpUktqcBr-pUKAEkHQiDmz-mmD4j8ed8tOmThIHRqnbVE6IW8wIzd2pJp4npL7X1thjqe25AgrcVTLz4CA91f6N1cF3OtZeKPTpDkddLeSV9sc-iYxB7NHa732k52BO6Nbs',
   patient:
     'https://lh3.googleusercontent.com/aida/AP1WRLvdrWkVu1-4lWV98BrAXN_Uj3FjMlozPGqHWtyWKOBRg1mRQuE0h2VPT_imiJ-Lvtxma7EZtxJIwKV2aOkY72HyqlwEMedu71E0HDJguXMduDOgyQgWvKzmOR6wYtcNnvdFk_EW4JNxuFvMBW0V0OTlWHg19oJS7VRIpnICu6TPs7tohHGAsXxc8EVrEGpLNo7cIXme_pI9KCKgDwTkv387w5zJ8mKMHQNOREzBm_5tIuwuw8_gebWuTA',
+
+  // --- Casos antes/después ---
+  // Reemplaza cada par por las fotos reales. Mismo encuadre, misma
+  // luz y mismo fondo en las dos tomas de cada paciente.
+  ba1Before: '/assets/allon4/allon4-before.jpg',
+  ba1After: '/assets/allon4/allon4-after.jpg',
+  ba2Before: '/casos/caso-2-antes.jpg',
+  ba2After: '/casos/caso-2-despues.jpg',
+  ba3Before: '/casos/caso-3-antes.jpg',
+  ba3After: '/casos/caso-3-despues.jpg',
 };
 
 // ============================================================
@@ -53,18 +63,26 @@ const es: PageContent = {
   hero: {
     variant: 'centered',
     bg: IMG.hero,
-    badge: 'A solo 5 minutos de la frontera de San Diego',
-    titleBefore: 'Transforma tu Sonrisa en',
-    titleAccent: 'un Solo Día',
-    titleAfter: 'con All-on-4',
+    badge: 'A 5 minutos de la frontera de San Diego',
+    titleLead: 'Cruzas en la mañana.',
+    titleMain: 'Regresas con dientes fijos.',
     subtitle:
-      'Implantes de arcada completa, sin dolor, a una fracción del costo de EE. UU. — con especialistas de clase mundial en Tijuana.',
-    primaryCta: 'Agenda tu Evaluación Gratuita Hoy',
-    secondaryCta: 'Ver Opciones de Precios y Ahorros',
-    trust: [
-      { icon: 'verified', label: 'Cero Dolor' },
-      { icon: 'savings', label: 'Ahorra hasta 70%' },
-      { icon: 'location_on', label: 'A 5 min de la frontera' },
+      'Implantes de arcada completa en una sola visita. Sin dolor, con sedación guiada, por una fracción de lo que cuestan en Estados Unidos.',
+    primaryCta: 'Agenda tu evaluación gratuita',
+    secondaryCta: 'Ver precios y ahorros',
+    video: {
+      src: '',
+      type: 'mp4',
+      poster: IMG.patient,
+      alt: 'Paciente de Perfect Smile Dental contando su experiencia con el All-on-4',
+      eyebrow: 'En 90 segundos',
+      title: 'Cómo es cruzar y salir con dientes el mismo día',
+    },
+    dayLabel: 'Cómo se ve tu día',
+    day: [
+      { time: '8:00 AM', label: 'Cruzas la frontera y llegas a la clínica' },
+      { time: '11:00 AM', label: 'Cirugía con sedación, sin dolor' },
+      { time: '5:00 PM', label: 'Sales con tu nueva sonrisa puesta' },
     ],
   },
   why: {
@@ -76,8 +94,10 @@ const es: PageContent = {
         icon: 'savings',
         tone: 'savings',
         wide: true,
-        title: 'Ahorros Inteligentes',
-        text: 'Disfruta de un ahorro de hasta el <span class="feature-card__highlight">70%</span> en comparación con los precios en Estados Unidos, sin comprometer jamás la calidad de los materiales (titanio premium) ni la tecnología médica.',
+        figure: '70%',
+        figureNote: 'menos que el precio promedio en EE. UU.',
+        title: 'El mismo titanio, sin el precio de Estados Unidos',
+        text: 'Pagas menos por costos de operación, no por materiales más baratos: usamos titanio premium y la misma tecnología médica que encontrarías en San Diego.',
       },
       {
         icon: 'location_on',
@@ -129,7 +149,8 @@ const es: PageContent = {
     items: [
       {
         icon: 'bolt',
-        title: 'Resultados Inmediatos (Same-Day)',
+        featured: true,
+        title: 'Entras sin dientes, sales con dientes. El mismo día.',
         text: 'Olvídate de los tratamientos que tardan meses. Viaja a Perfect Smile Dental y regresa a casa con tu nueva sonrisa ese mismo día.',
       },
       {
@@ -158,7 +179,6 @@ const es: PageContent = {
     id: 'proceso',
     eyebrow: 'Reducción de fricción',
     heading: 'Tu Procedimiento Cómodo y Seguro de Principio a Fin',
-    connector: 'arrows',
     steps: [
       {
         icon: 'radiology',
@@ -186,17 +206,25 @@ const es: PageContent = {
     heading: 'Historias Reales. Vidas Transformadas.',
     intro:
       'Descubre cómo el tratamiento All-on-4 en Tijuana ha cambiado la vida de cientos de pacientes, devolviéndoles la confianza para sonreír y ahorrándoles miles de dólares.',
-    groups: [
-      [
-        { src: IMG.clinic, alt: 'Paciente sonriendo tras su tratamiento All-on-4' },
-        { src: IMG.patient, alt: 'Paciente internacional feliz con su nueva sonrisa' },
-        { src: IMG.clinic, alt: 'Clínica y equipo especializado' },
-      ],
-      [
-        { src: IMG.patient, alt: 'Sonrisa transformada tras el tratamiento' },
-        { src: IMG.clinic, alt: 'Consulta especializada en la clínica' },
-        { src: IMG.patient, alt: 'Paciente feliz con el resultado final' },
-      ],
+    // Cada caso necesita DOS fotos del mismo paciente, mismo encuadre
+    // y misma luz. El recorte es vertical a la mitad, así que las dos
+    // tomas deben coincidir para que la comparación se lea limpia.
+    cases: [
+      {
+        before: { src: IMG.ba1Before, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba1After, alt: 'La misma paciente con su arcada completa fija' },
+        note: 'Arcada superior · resultado el mismo día',
+      },
+      {
+        before: { src: IMG.ba2Before, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba2After, alt: 'El mismo paciente con su nueva sonrisa fija' },
+        note: 'Arcada completa · una sola visita',
+      },
+      {
+        before: { src: IMG.ba3Before, alt: 'Paciente antes del tratamiento All-on-4' },
+        after: { src: IMG.ba3After, alt: 'El mismo paciente tras la rehabilitación' },
+        note: 'Superior e inferior · dos visitas',
+      },
     ],
   },
   cta: {
@@ -225,18 +253,26 @@ const en: PageContent = {
   hero: {
     variant: 'centered',
     bg: IMG.hero,
-    badge: 'Just 5 minutes from the San Diego border',
-    titleBefore: 'Transform Your Smile in',
-    titleAccent: 'Just One Day',
-    titleAfter: 'with All-on-4',
+    badge: '5 minutes from the San Diego border',
+    titleLead: 'Cross in the morning.',
+    titleMain: 'Drive home with fixed teeth.',
     subtitle:
-      'Full-arch implants, pain-free, at a fraction of the US cost — with world-class specialists in Tijuana.',
-    primaryCta: 'Book Your Free Evaluation Today',
-    secondaryCta: 'View Pricing and Savings Options',
-    trust: [
-      { icon: 'verified', label: 'Zero Pain' },
-      { icon: 'savings', label: 'Save up to 70%' },
-      { icon: 'location_on', label: '5 min from the border' },
+      'Full-arch implants in a single visit. Pain-free, under guided sedation, for a fraction of what they cost in the United States.',
+    primaryCta: 'Book your free evaluation',
+    secondaryCta: 'See pricing and savings',
+    video: {
+      src: '',
+      type: 'mp4',
+      poster: IMG.patient,
+      alt: 'Perfect Smile Dental patient talking about their All-on-4 experience',
+      eyebrow: 'In 90 seconds',
+      title: 'What it is like to cross and leave with teeth the same day',
+    },
+    dayLabel: 'What your day looks like',
+    day: [
+      { time: '8:00 AM', label: 'You cross the border and arrive at the clinic' },
+      { time: '11:00 AM', label: 'Surgery under sedation, pain-free' },
+      { time: '5:00 PM', label: 'You leave wearing your new smile' },
     ],
   },
   why: {
@@ -248,8 +284,10 @@ const en: PageContent = {
         icon: 'savings',
         tone: 'savings',
         wide: true,
-        title: 'Smart Savings',
-        text: 'Enjoy savings of up to <span class="feature-card__highlight">70%</span> compared to US prices, without ever compromising on material quality (premium titanium) or medical technology.',
+        figure: '70%',
+        figureNote: 'below the average US price',
+        title: 'The same titanium, without the US price tag',
+        text: 'You pay less because of operating costs, not cheaper materials: we use premium titanium and the same medical technology you would find in San Diego.',
       },
       {
         icon: 'location_on',
@@ -301,7 +339,8 @@ const en: PageContent = {
     items: [
       {
         icon: 'bolt',
-        title: 'Immediate Results (Same-Day)',
+        featured: true,
+        title: 'You arrive without teeth, you leave with teeth. Same day.',
         text: 'Forget treatments that take months. Travel to Perfect Smile Dental and go home with your new smile that very same day.',
       },
       {
@@ -330,7 +369,6 @@ const en: PageContent = {
     id: 'proceso',
     eyebrow: 'Reducing friction',
     heading: 'Your Comfortable, Safe Procedure from Start to Finish',
-    connector: 'arrows',
     steps: [
       {
         icon: 'radiology',
@@ -358,17 +396,25 @@ const en: PageContent = {
     heading: 'Real Stories. Transformed Lives.',
     intro:
       'Discover how All-on-4 treatment in Tijuana has changed the lives of hundreds of patients, giving them back the confidence to smile and saving them thousands of dollars.',
-    groups: [
-      [
-        { src: IMG.clinic, alt: 'Patient smiling after All-on-4 treatment' },
-        { src: IMG.patient, alt: 'International patient happy with their new smile' },
-        { src: IMG.clinic, alt: 'Clinic and specialized team' },
-      ],
-      [
-        { src: IMG.patient, alt: 'Transformed smile after treatment' },
-        { src: IMG.clinic, alt: 'Specialized consultation at the clinic' },
-        { src: IMG.patient, alt: 'Happy patient with the final result' },
-      ],
+    // Each case needs TWO photos of the same patient, same framing
+    // and same lighting. The split is vertical down the middle, so
+    // both shots must line up for the comparison to read cleanly.
+    cases: [
+      {
+        before: { src: IMG.ba1Before, alt: 'Patient before All-on-4 treatment' },
+        after: { src: IMG.ba1After, alt: 'The same patient with a fixed full arch' },
+        note: 'Upper arch · same-day result',
+      },
+      {
+        before: { src: IMG.ba2Before, alt: 'Patient before All-on-4 treatment' },
+        after: { src: IMG.ba2After, alt: 'The same patient with their new fixed smile' },
+        note: 'Full arch · single visit',
+      },
+      {
+        before: { src: IMG.ba3Before, alt: 'Patient before All-on-4 treatment' },
+        after: { src: IMG.ba3After, alt: 'The same patient after rehabilitation' },
+        note: 'Upper and lower · two visits',
+      },
     ],
   },
   cta: {
@@ -380,7 +426,7 @@ const en: PageContent = {
   },
 };
 
-const content: Record<Lang, PageContent> = { es, en };
+const content: Record<Lang, PageContent> = { en, es };
 
 export function getContent(lang: Lang): PageContent {
   return content[lang];
